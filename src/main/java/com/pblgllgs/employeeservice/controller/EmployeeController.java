@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/employee")
@@ -31,18 +32,18 @@ public class EmployeeController {
     @PostMapping
     public Employee addEmployee(@RequestBody Employee employee) {
         LOGGER.info("Employee added:");
-        return employeeRepository.addEmployee(employee);
+        return employeeRepository.save(employee);
     }
 
     @GetMapping("/{employeeId}")
-    public Employee findEmployeeById(@PathVariable("employeeId") Long id) {
+    public ResponseEntity<Employee> findEmployeeById(@PathVariable("employeeId") Long id) {
         LOGGER.info("Employee find:");
-        return employeeRepository.findById(id);
+        return new ResponseEntity<>(employeeRepository.findById(id).orElseThrow(), HttpStatus.OK);
     }
 
     @GetMapping("/department/{departmentId}")
     public List<Employee> findByDepartment(@PathVariable("departmentId") Long id) {
-        LOGGER.info("Employees with department id:{}",id);
-        return employeeRepository.findByDepartment(id);
+        LOGGER.info("Employees with department id:{}", id);
+        return employeeRepository.findEmployeesByDepartmentId(id);
     }
 }
